@@ -2,6 +2,8 @@ import socket
 import ssl
 
 alvo = input("Digite o IP ou Endereco para escanear: ")
+porta_inicial = int(input("digite a porta inicial: "))
+porta_final = int(input("digite a  porta final: "))
 
 portas_abertas = []
 
@@ -38,7 +40,7 @@ def pegar_banner(alvo,porta):
     except Exception as erro:
         return f"Nao foi possivel capturar banner ({erro})" 
 
-for porta in range(1, 1001):
+for porta in range(porta_inicial, porta_final + 1):
     meu_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     meu_socket.settimeout(0.05)
     resultado = meu_socket.connect_ex((alvo, porta))
@@ -49,5 +51,11 @@ for porta in range(1, 1001):
     meu_socket.close()
 
 print(f"Total de portas abertas: {len(portas_abertas)}")
+arquivo_resultado = open("resultado_scan.txt",  "w", encoding="utf-8")
+arquivo_resultado.write(f"Escaneamento de  {alvo} (portas {porta_inicial} a {porta_final})\n")
+arquivo_resultado.write(f"total de portas: {len(portas_abertas)}\n")
+
 for porta, servico, banner in portas_abertas:
-    print(f"Porta {porta} está aberta! ({servico}) - banner: {banner}")
+    arquivo_resultado.write(f"Porta {porta} está aberta! ({servico}) - banner: {banner}")
+arquivo_resultado.close()
+
